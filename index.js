@@ -28,22 +28,30 @@ async function run() {
 
         const usersCollection = client.db('usersdb').collection('users');
 
-        app.get('/users',async(req,res) => {
+        app.get('/users', async (req, res) => {
             const cursor = usersCollection.find();
             const result = await cursor.toArray();
             res.send(result)
         })
 
-        app.post('/users', async(req, res) => {
+        app.get('/users/:id', async (req, res) => {
+            console.log('data in the server', req.params.id);
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await usersCollection.findOne(query);
+            res.send(result);
+        })
+
+        app.post('/users', async (req, res) => {
             // console.log('data in the server', req.body);
             const newUser = req.body;
             const result = await usersCollection.insertOne(newUser);
             res.send(result)
         })
 
-        app.delete('/users/:id',async(req,res) => {
+        app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await usersCollection.deleteOne(query)
             res.send(result)
         })
